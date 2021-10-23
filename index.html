@@ -26,43 +26,49 @@
     <script src="assets/scripts/functions.js"></script>
     <script src="assets/scripts/layers.js"></script>
     <script>
-        var geojsonMarkerOptions = {
-            radius: 1,
-            fillColor: "#FFA500",
-            color: "#FFA500",
-            weight: 1,
-            opacity: 1,
-            fillOpacity: 0.8
-        };
+        function loadPredictions() {
+            let api_url = 'https://predict.cusf.co.uk/api/v1/';
 
-        let api_url = 'https://predict.cusf.co.uk/api/v1/';
+            OVERLAY_LAYERS['flights'] = {
+                'ns104': L.geoJson.ajax('./ns104.geojson', {
+                    'onEachFeature': highlightAndPopupOnClick
+                }),
+            };
 
-        OVERLAY_LAYERS['flights'] = {
-            'ns102': L.geoJson.ajax('./ns102.geojson', {
-                'onEachFeature': highlightAndPopupOnClick,
-                'attribution': 'Airspace &copy; FAA'
-            }),
-        };
+            OVERLAY_LAYERS['predictions'] = {
+                'ns104': L.geoJson.ajax('./ns104_prediction.geojson', {
+                    'attribution': 'Prediction - ' + api_url,
+                    pointToLayer: function (feature, latlng) {
+                        return L.circleMarker(latlng, {
+                            radius: 1,
+                            fillColor: "#FFA500",
+                            color: "#FFA500",
+                            weight: 1,
+                            opacity: 1,
+                            fillOpacity: 0.8
+                        });
+                    },
+                    'style': function (feature) {
+                        return {'color': '#FFA500', 'dashArray': '10, 20'};
+                    }
+                })
+            };
+        }
 
-        OVERLAY_LAYERS['predictions'] = {
-            'ns103': L.geoJson.ajax('./ns102_prediction.geojson', {
-                'attribution': 'Prediction - ' + api_url,
-                pointToLayer: function (feature, latlng) {
-                    return L.circleMarker(latlng, geojsonMarkerOptions);
-                },
-                'style': function (feature) {
-                    return {'color': '#FFA500', 'dashArray': '10, 20'};
-                }
-            })
-        };
+        MAP.setView([39.6, -77.4], 9);
+
+        loadPredictions();
 
         let LAYER_CONTROL = L.control.groupedLayers(BASE_LAYERS, OVERLAY_LAYERS);
 
+        setInterval(function () {
+            loadPredictions()
+        }, 60000);
+
         MAP.addControl(LAYER_CONTROL);
         MAP.addLayer(CONTROLLED_AIRSPACE_LAYER);
-        MAP.addLayer(OVERLAY_LAYERS['flights']['ns102']);
-        MAP.addLayer(OVERLAY_LAYERS['predictions']['ns102']);
-        MAP.setView([39.4, -77.4], 10);
+        MAP.addLayer(OVERLAY_LAYERS['flights']['ns104']);
+        MAP.addLayer(OVERLAY_LAYERS['predictions']['ns104']);
     </script>
 </section>
 </body>
