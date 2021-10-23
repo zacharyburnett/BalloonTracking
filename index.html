@@ -26,17 +26,19 @@
     <script src="assets/scripts/functions.js"></script>
     <script src="assets/scripts/layers.js"></script>
     <script>
+        let flight = 'ns104';
+
         function loadPredictions() {
             let api_url = 'https://predict.cusf.co.uk/api/v1/';
 
             OVERLAY_LAYERS['flights'] = {
-                'ns104': L.geoJson.ajax('./ns104.geojson', {
+                flight: L.geoJson.ajax('./' + flight + '.geojson', {
                     'onEachFeature': highlightAndPopupOnClick
                 }),
             };
 
             OVERLAY_LAYERS['predictions'] = {
-                'ns104': L.geoJson.ajax('./ns104_prediction.geojson', {
+                flight: L.geoJson.ajax('./' + flight + '_prediction.geojson', {
                     'attribution': 'Prediction - ' + api_url,
                     pointToLayer: function (feature, latlng) {
                         return L.circleMarker(latlng, {
@@ -67,8 +69,8 @@
 
         MAP.addControl(LAYER_CONTROL);
         MAP.addLayer(CONTROLLED_AIRSPACE_LAYER);
-        MAP.addLayer(OVERLAY_LAYERS['flights']['ns104']);
-        MAP.addLayer(OVERLAY_LAYERS['predictions']['ns104']);
+        MAP.addLayer(OVERLAY_LAYERS['flights'][flight]);
+        MAP.addLayer(OVERLAY_LAYERS['predictions'][flight]);
     </script>
 </section>
 </body>
