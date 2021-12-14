@@ -57,8 +57,6 @@
             };
         }
 
-        MAP.setView([39.6, -77.4], 9);
-
         loadPredictions();
 
         let LAYER_CONTROL = L.control.groupedLayers(BASE_LAYERS, OVERLAY_LAYERS);
@@ -66,6 +64,11 @@
         setInterval(function () {
             loadPredictions()
         }, 20000);
+
+        let all_layers = new L.FeatureGroup().addTo(MAP)
+        OVERLAY_LAYERS['predictions'][flight].on('data:loaded', function () {
+            MAP.fitBounds(all_layers.getBounds())
+        }).addTo(all_layers);
 
         MAP.addControl(LAYER_CONTROL);
         MAP.addLayer(CONTROLLED_AIRSPACE_LAYER);
