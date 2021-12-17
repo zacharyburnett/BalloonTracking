@@ -32,7 +32,7 @@ function highlightFeatureOnClick(feature, layer) {
 
         SELECTED_FEATURE = click_event.target;
 
-        if (SELECTED_FEATURE.setStyle != null) {
+        if (SELECTED_FEATURE.setStyle != null && SELECTED_FEATURE.options.style != null) {
             SELECTED_FEATURE_ORIGINAL_STYLE = SELECTED_FEATURE.options.style;
             highlightFeature(SELECTED_FEATURE);
         } else {
@@ -53,18 +53,18 @@ function bounds(layers) {
     let southwest = layers[0].getBounds().getSouthWest();
 
     for (let layer of layers) {
-        let bounds = layer.getBounds();
-        if (bounds.getNorth() > northeast.lat) {
-            northeast.lat = bounds.getNorth();
+        let _bounds = layer.getBounds();
+        if (_bounds.getNorth() > northeast.lat) {
+            northeast.lat = _bounds.getNorth();
         }
         if (bounds.getEast() > northeast.lng) {
-            northeast.lng = bounds.getEast();
+            northeast.lng = _bounds.getEast();
         }
         if (bounds.getSouth() < southwest.lat) {
-            southwest.lat = bounds.getSouth();
+            southwest.lat = _bounds.getSouth();
         }
         if (bounds.getWest() < southwest.lng) {
-            southwest.lng = bounds.getWest();
+            southwest.lng = _bounds.getWest();
         }
     }
 
